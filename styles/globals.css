@@ -1,5 +1,5 @@
 * { box-sizing: border-box; }
 a { color: inherit; text-decoration: none; }
-html { font-size: 2.5vw; }
+html { font-size: min(2.5vw, 1.vh); }
 html, body { padding: 0; margin: 0; } 
 html, body, #__next { height: 100%; }
