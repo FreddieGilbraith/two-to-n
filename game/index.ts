@@ -115,7 +115,7 @@ function shiftTiles(
   return newState;
 }
 
-export default function useGameState(): [GameState, MakeMove] {
+export default function useGameState(): [GameState, MakeMove, number] {
   const [gameHistory, setGameHistory] = React.useState<GameHistory>({
     current: [
       { id: nanoid(), value: 1, x: 0, y: 0 },
@@ -151,5 +151,5 @@ export default function useGameState(): [GameState, MakeMove] {
     });
   };
 
-  return [gameHistory.current, performMove];
+  return [gameHistory.current, performMove, gameHistory.historyHeight];
 }
