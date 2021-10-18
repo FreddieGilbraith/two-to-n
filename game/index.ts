@@ -14,6 +14,7 @@ type GameState = Array<TileState>;
 
 type GameHistory = {
   current: GameState;
+  historyHeight: number;
   previous: GameHistory | null;
 };
 
@@ -27,6 +28,7 @@ export default function useGameState(): [GameState, MakeMove] {
       { id: nanoid(), value: 3, x: 2, y: 2 },
       { id: nanoid(), value: 4, x: 3, y: 3 },
     ],
+    historyHeight: 0,
     previous: null,
   });
 

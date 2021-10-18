@@ -19,6 +19,7 @@ const Home: NextPage = () => {
 
         {state.map(({ id, value, x, y }) => (
           <div
+            key={id}
             className={styles.gameTile}
             style={{
               left: `${1 + x * 7}rem`,
