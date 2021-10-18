@@ -69,6 +69,16 @@ function getAxisShift(move: MovementMove): (...args: Array<number>) => number {
   }
 }
 
+function getAxisAntiShift(
+  move: MovementMove
+): (...args: Array<number>) => number {
+  if (move === "Up" || move === "Left") {
+    return Math.max;
+  } else {
+    return Math.min;
+  }
+}
+
 function sortTiles(
   move: MovementMove,
   state: Array<TileState>
@@ -92,23 +102,31 @@ function shiftTiles(
   const primaryAxis = getPrimaryAxis(move);
   const secondaryAxis = getSecondaryAxis(move);
   const shifter = getAxisShift(move);
+  const antiShift = getAxisAntiShift(move);
   const sign = getAxisSign(move);
 
-  const deepestPoint: Array<number> = [];
+  const spaceInGrid: Array<Array<boolean>> = new Array(4).fill(
+    new Array(4).fill(true)
+  );
   const newState = [];
 
   for (const tile of state) {
-    const primary = tile[primaryAxis];
+    let primary = tile[primaryAxis];
     const secondary = tile[secondaryAxis];
-    const deepest = deepestPoint[secondary] || bound;
-    const stop = shifter(bound, deepest);
-    const newPrimary = shifter(stop, primary);
 
-    deepestPoint[secondary] = newPrimary + 1;
+    while (primary !== bound) {
+      if (spaceInGrid[primary + sign][secondary]) {
+        primary = primary + sign;
+      } else {
+        break;
+      }
+    }
+
+    spaceInGrid[primary][secondary] = false;
 
     newState.push({
       ...tile,
-      [primaryAxis]: newPrimary,
+      [primaryAxis]: primary,
     });
   }
 
@@ -140,8 +158,6 @@ export default function useGameState(): [GameState, MakeMove, number] {
       const sorted = sortTiles(move, previous.current);
 
       const shifted = shiftTiles(move, sorted);
-
-      console.log(sorted.map((x) => x.value));
 
       return {
         current: shifted,
