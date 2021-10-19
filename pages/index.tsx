@@ -32,8 +32,10 @@ const GameTile: React.FC<{ value: number; x: number; y: number }> = ({
       className={styles.gameTile}
       style={{
         transition: [
-          `top ${Math.abs(coords[1].y - coords[0].y) / 15}s`,
-          `left ${Math.abs(coords[1].x - coords[0].x) / 15}s`,
+          //`top ${Math.abs(coords[1].y - coords[0].y) / 15}s`,
+          //`left ${Math.abs(coords[1].x - coords[0].x) / 15}s`,
+          `top 0.2s`,
+          `left 0.2s`,
         ].join(", "),
 
         left: `${1 + coords[0].x * 7}rem`,
@@ -46,18 +48,35 @@ const GameTile: React.FC<{ value: number; x: number; y: number }> = ({
 };
 
 const Home: NextPage = () => {
-  const [state, makeMove, undos] = useGameState();
+  const boardSize = 4;
+  const [{ current: currentState, historyHeight: undos }, makeMove] =
+    useGameState(boardSize);
 
-  console.log(undos);
+  const tiles = (() => {
+    const acc = [];
+
+    let x = 0;
+    for (const row of currentState) {
+      let y = 0;
+      for (const cell of row) {
+        if (cell) {
+          acc.push({ ...cell, x, y });
+        }
+        y++;
+      }
+      x++;
+    }
+    return acc;
+  })();
 
   return (
     <div className={styles.main}>
       <div className={styles.grid}>
-        {new Array(16).fill(null).map((_, i) => (
+        {new Array(Math.pow(2, boardSize)).fill(null).map((_, i) => (
           <div key={i} className={cn(styles.gridSpace)} />
         ))}
 
-        {state.map(({ id, ...props }) => (
+        {tiles.map(({ id, ...props }) => (
           <GameTile key={id} {...props} />
         ))}
       </div>
